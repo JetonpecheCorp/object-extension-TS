@@ -1,6 +1,6 @@
 {
   "name": "@jetonpeche/object-extension",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ajout de methodes d'extension au type Object",
   "author": "jetonpeche",
   "main": "dist/ObjectExtension.js",
@@ -8,7 +8,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc"
+    "build": "npm link && tsc && npm publish"
   },
   "repository": {
     "type": "git",

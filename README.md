@@ -64,3 +64,16 @@ let obj2 = {
 
 obj1.equals(obj2);
 ```
+
+## toBase64
+
+Permet de convertir un object en base 64
+
+```js
+let personne = {
+    nom: "nom 1",
+    age: 1
+}
+
+let base64 = personne.toBase64();
+```

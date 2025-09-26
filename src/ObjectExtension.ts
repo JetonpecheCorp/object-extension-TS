@@ -17,7 +17,12 @@ declare global {
         /**
          * Comparer l'objet avec un autre objet au niveau valeurs
          */
-        equals(_object: object): boolean
+        equals(_object: object): boolean,
+
+        /**
+         * Convertir un object en base 64
+         */
+        toBase64(): string | null
     }
 }
 
@@ -59,6 +64,24 @@ Object.defineProperty(Object.prototype, "copyFrom",
             }
             else
                 (this as any)[cle] = (_objectSource as any)[cle];
+        }
+    }
+});
+
+Object.defineProperty(Object.prototype, "toBase64",
+{
+    value: function(): string | null
+    {
+        if(this === null || this === undefined)
+            return null;
+
+        try 
+        {
+            return btoa(JSON.stringify(this));
+        } 
+        catch (error) 
+        {
+            return null;    
         }
     }
 });
