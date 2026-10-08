@@ -1,24 +1,38 @@
 {
   "name": "@jetonpeche/object-extension",
-  "version": "1.0.1",
-  "description": "Ajout de methodes d'extension au type Object",
+  "version": "2.0.0",
+  "description": "Powerful and strongly-typed extension methods for the global Object prototype (deep clone, equals, pick, omit, etc.).",
   "author": "jetonpeche",
   "main": "dist/ObjectExtension.js",
+  "types": "dist/ObjectExtension.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "npm link && tsc && npm publish"
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "publish-local": "npm link && tsc",
+    "release": "npm publish --access public"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/JetonpecheCorp/object-extension-TS.git"
   },
-  "keywords": ["object", "extension"],
+  "keywords": [
+    "object",
+    "extension",
+    "prototype",
+    "deep-clone",
+    "equals",
+    "pick",
+    "omit",
+    "typescript",
+    "utility"
+  ],
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@types/node": "^24.5.2",
+    "@types/node": "^24.19.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }

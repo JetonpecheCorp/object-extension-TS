@@ -1,79 +1,140 @@
-# Methode d'extension Object
+# Object Extensions
 
-## copyTo
+*[Documentation en français](https://github.com/JetonpecheCorp/object-extension-TS/blob/main/README.fr.md)*
 
-Permet de copier un object JSON dans un autre
-sans causer d'interférence en cas de modification de la source.
+A lightweight, strongly-typed npm package that extends the native JavaScript `Object.prototype` with powerful utility methods.  
+It provides safe deep cloning, deep comparison, and common object manipulations without altering the native behavior in loops (non-enumerable properties).
 
-```js
-let jsonClone = {};
+## Installation
 
-let json = {
-    nom: "nom 1",
-    age: 10
-}
-
-json.copyTo(jsonClone);
+```bash
+npm install @jetonpeche/object-extension
 ```
 
-## copyFrom
+## Usage
 
-Permet de copier les valeur d'un object dans celui actuel
-(Inverse de `copyTo`)
+Simply import the package once at the entry point of your application (e.g., `index.ts`, `main.ts`, or `app.js`).  
+This will automatically inject the methods into the global `Object` prototype.
 
-```js
-let jsonClone = {};
+```typescript
+import "@jetonpeche/object-extension";
 
-let json = {
-    nom: "nom 1",
-    age: 10
-}
-
-json.copyTo(jsonClone);
-
-json.nom = "valeur modifier";
-
-json.copyFrom(jsonClone);
+// Now you can use the extensions on any object!
+const myObj = {};
+console.log(myObj.isEmpty()); // true
 ```
 
-## equals
+## API Reference
 
-Permet de comparer deux objets au niveau propriété  
-L'odre des éléments des listes n'ont pas d'importance
+### `copyTo(target: object): void`
+Deep copies the properties of the current object into a target object. It breaks all memory references, ensuring that modifying the target later will not affect the source.
 
-```js
-let obj1 = {
-    nom: "nom 1",
-    detail: {
-        age: 10
-    },
-    liste: [1, 2, 3],
-    listeObj: [{ prenom: "prenom 1" }]
+```javascript
+const original = { name: "John", age: 30 };
+const clone = {};
+
+original.copyTo(clone);
+console.log(clone); // { name: "John", age: 30 }
+```
+
+### `copyFrom(source: object): void`
+Deep copies the properties from a source object into the current object. (This is the exact opposite of `copyTo`).
+
+```javascript
+const currentObj = { name: "John", age: 30 };
+const backup = {};
+
+// Save state
+currentObj.copyTo(backup);
+
+// Mutate original
+currentObj.name = "Modified value";
+
+// Restore state from backup
+currentObj.copyFrom(backup);
+console.log(currentObj.name); // "John"
+```
+
+### `equals(other: object): boolean`
+Deeply compares the current object with another object by value. It checks nested objects and arrays.  
+**Note:** The order of elements inside arrays does not matter for the comparison to return true.
+
+```javascript
+const obj1 = {
+    name: "Object 1",
+    details: { age: 10 },
+    list: [1, 2, 3],
+    objList: [{ firstName: "John" }],
     description: null
 };
 
-let obj2 = {
-    nom: "nom 1",
-    detail: {
-        age: 10
-    },
-    liste: [1, 2, 3],
-    listeObj: [{ prenom: "prenom 1" }]
+const obj2 = {
+    name: "Object 1",
+    details: { age: 10 },
+    list: [3, 2, 1], // Order is different, but elements are the same
+    objList: [{ firstName: "John" }],
     description: null
 };
 
-obj1.equals(obj2);
+console.log(obj1.equals(obj2)); // true
 ```
 
-## toBase64
+### `toBase64(): string | null`
+Converts the object into a Base64 encoded string. It safely handles UTF-8 characters (like accents and emojis) without throwing `InvalidCharacterError`.
 
-Permet de convertir un object en base 64
+```javascript
+const person = {
+    name: "Jean-François",
+    age: 25
+};
 
-```js
-let personne = {
-    nom: "nom 1",
-    age: 1
-}
-
-let base64 = personne.toBase64();
+const base64 = person.toBase64();
+console.log(base64); // Encoded string
 ```
+
+### `isEmpty(): boolean`
+Checks if the object has no own properties.
+
+```javascript
+const emptyObj = {};
+const filledObj = { id: 1 };
+
+console.log(emptyObj.isEmpty()); // true
+console.log(filledObj.isEmpty()); // false
+```
+
+### `clear(): void`
+Empties the object of all its own properties while preserving its original memory reference. Very useful for resetting state objects in frameworks like Vue, React, or Angular.
+
+```javascript
+const state = { user: "Admin", token: "12345" };
+
+state.clear();
+console.log(state); // {}
+```
+
+### `pick(keys: string[]): object`
+Creates a **new** object composed only of the specified properties.
+
+```typescript
+const user = { id: 1, name: "Alice", password: "secret_password" };
+
+// TypeScript provides auto-completion for keys here!
+const safeUser = user.pick(['id', 'name']);
+
+console.log(safeUser); // { id: 1, name: "Alice" }
+```
+
+### `omit(keys: string[]): object`
+Creates a **new** object by excluding the specified properties.
+
+```typescript
+const user = { id: 1, name: "Alice", password: "secret_password" };
+
+const publicUser = user.omit(['password']);
+
+console.log(publicUser); // { id: 1, name: "Alice" }
+```
+
+## TypeScript Support
+This package is written in TypeScript and provides deep, strict typing for all methods (especially `pick` and `omit`, which validate keys against the object's interface).
